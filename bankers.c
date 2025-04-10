@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 int max[100][100];
 int alloc[100][100];
@@ -7,114 +6,123 @@ int need[100][100];
 int avail[100];
 int n, r;
 
-void input();
-void show();
-void cal();
-
-int main() {
-    printf("********** Banker's Algorithm ************\n");
-    input();
-    show();
-    cal();
-    return 0;
-}
-
 void input() {
     int i, j;
-    printf("Enter the number of Processes: ");
+    printf("\nEnter the number of processes: ");
     scanf("%d", &n);
-    printf("Enter the number of Resource Instances: ");
+    
+    printf("Enter the number of resources: ");
     scanf("%d", &r);
-
+    
     printf("Enter the Max Matrix:\n");
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < r; j++) {
+    for(i = 0; i < n; i++) {
+        for(j = 0; j < r; j++) {
             scanf("%d", &max[i][j]);
         }
     }
 
     printf("Enter the Allocation Matrix:\n");
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < r; j++) {
+    for(i = 0; i < n; i++) {
+        for(j = 0; j < r; j++) {
             scanf("%d", &alloc[i][j]);
         }
     }
 
     printf("Enter the Available Resources:\n");
-    for (j = 0; j < r; j++) {
-        scanf("%d", &avail[j]);
+    for(i = 0; i < r; i++) {
+        scanf("%d", &avail[i]);  // Corrected indexing
     }
 }
 
 void show() {
     int i, j;
-    printf("\nProcess\tAllocation\tMax\tAvailable\n");
-    for (i = 0; i < n; i++) {
-        printf("P%d\t", i + 1);
-        for (j = 0; j < r; j++) {
+    printf("\nProcess\t Allocation\t Max\t Available\n");
+    
+    for(i = 0; i < n; i++) {
+        printf("P%d\t ", i + 1);
+        
+        for(j = 0; j < r; j++) {
             printf("%d ", alloc[i][j]);
         }
+        
         printf("\t");
-        for (j = 0; j < r; j++) {
+        
+        for(j = 0; j < r; j++) {
             printf("%d ", max[i][j]);
         }
+        
         printf("\t");
-        if (i == 0) {
-            for (j = 0; j < r; j++) {
+        
+        if(i == 0) {  // Available resources are printed only once
+            for(j = 0; j < r; j++) {
                 printf("%d ", avail[j]);
             }
         }
+        
         printf("\n");
     }
 }
 
 void cal() {
-    int finish[100] = {0};
-    int safe[100], k, c1 = 0, flag = 1;
-    int i, j;
+    int finish[100], safe[100], flag = 1;
+    int i, j, k, c1 = 0;
 
-    // Calculate the Need matrix
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < r; j++) {
+    // Initialize finish array to 0 (not finished)
+    for(i = 0; i < n; i++) {
+        finish[i] = 0;
+    }
+
+    // Calculate the Need Matrix
+    for(i = 0; i < n; i++) {
+        for(j = 0; j < r; j++) {
             need[i][j] = max[i][j] - alloc[i][j];
         }
     }
 
-    printf("\nSafe Sequence: ");
-    while (flag) {
+    // Start Safe Sequence Calculation
+     while(c1 < n) {
         flag = 0;
-        for (i = 0; i < n; i++) {
-            int c = 0;
-            for (j = 0; j < r; j++) {
-                if (finish[i] == 0 && need[i][j] <= avail[j]) {
-                    c++;
-                    if (c == r) {
-                        for (k = 0; k < r; k++) {
-                            avail[k] += alloc[i][k];
-                        }
-                        finish[i] = 1;
-                        printf("P%d -> ", i + 1);
-                        flag = 1;
-                        break;
+         for(i = 0; i < n; i++) {
+            if(finish[i] == 0) {
+                int c = 0;
+                for(j = 0; j < r; j++) {
+                    if(need[i][j] <= avail[j]) {
+                        c++;
+                    }
+                }
+
+                if(c == r) {
+                    for(k = 0; k < r; k++) {
+                        avail[k] += alloc[i][k];
+                    }
+                    safe[c1++] = i;
+                    finish[i] = 1;
+                    flag = 1;
+                    printf("P%d->", i);
+                    if(flag =0) {
+                        break;;
                     }
                 }
             }
         }
     }
 
-    // Check for deadlock
-    for (i = 0; i < n; i++) {
-        if (finish[i] == 1) {
-            c1++;
-        } else {
-            printf("P%d -> ", i + 1);
-        }
-    }
 
-    if (c1 == n) {
-        printf("\nThe system is in a SAFE state.\n");
+    // Checking if all processes finished
+      if(c1 == n) {
+        printf("\n The system is in a safe state");
     } else {
-        printf("\nProcesses are in DEADLOCK.\n");
-        printf("The system is in an UNSAFE state.\n");
+        printf("\n Processes are in deadlock");
+        printf("\n System is in unsafe state");
     }
+}
+
+
+
+int main() {
+    printf("-----Banker's Algorithm-----\n");
+    input();
+    show();
+    cal();
+    return 0;
 }

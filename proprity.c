@@ -1,61 +1,64 @@
-#include <stdio.h>
-
-int p[30], bt[30], pr[30], wt[30], tat[30], n;
-
-void sort() {
-    for (int i = 0; i < n; i++) {
-        for (int j = i + 1; j < n; j++) {
-            if (pr[i] > pr[j]) {
-                int temp = bt[i]; bt[i] = bt[j]; bt[j] = temp;
-                temp = p[i]; p[i] = p[j]; p[j] = temp;
-                temp = pr[i]; pr[i] = pr[j]; pr[j] = temp;
+#include<stdio.h>
+int main()
+{
+    int n ,i,j,temp;
+    int bt[20],wt[20],tat[20],p[20],priority[20];
+    int total_wt =0 ,total_tat=0;
+    printf("enter the number of process :");
+    scanf("%d",&n);
+    printf("enter the burst time and the priority\n ");
+    for(i=0;i<n;i++)
+    {
+        printf("p%d hte burst time",i+1);
+        scanf("%d",&bt[i]);
+        printf("p%d the priority",i+1);
+        scanf("%d",&priority[i]);
+        p[i] = i+1;
+    }
+    //sort the burst time 
+    for(i=0;i<n;i++)
+    {
+        for(j=i+1;j<n;j++)
+        {
+            if(priority[i] > priority[j])
+            {
+                // swap the burst time
+                temp = bt[i];
+                bt[i] = bt[j];
+                bt[j] = temp;
+                // swap the process id
+                temp = p[i];
+                p[i] = p[j];
+                p[j] = temp;
+                // swap the priority
+                temp = priority[i];
+                priority[i] = priority[j];
+                priority[j] = temp ;
             }
         }
     }
-}
-
-void WT_TAT(int *tot_tat, int *tot_wt) {
-    *tot_tat = *tot_wt = 0;
-    tat[0] = bt[0];
-    *tot_tat += tat[0];
-    wt[0] = 0;
-
-    for (int i = 1; i < n; i++) {
-        tat[i] = tat[i - 1] + bt[i];
-        wt[i] = wt[i - 1] + bt[i - 1];
-        *tot_tat += tat[i];
-        *tot_wt += wt[i];
+    // calculate the waiting time
+    wt[0]=0;
+    for(i=1;i<n;i++)
+    {
+        wt[i] = wt[i-1]+bt[i-1];
     }
-}
-
-int main() {
-    int tot_tat, tot_wt;
-    float avg_tat, avg_wt;
-
-    printf("Enter the number of processes: ");
-    scanf("%d", &n);
-
-    for (int i = 0; i < n; i++) {
-        printf("Enter burst time and priority of process[%d]: ", i + 1);
-        scanf("%d %d", &bt[i], &pr[i]);
-        p[i] = i;  // Process IDs
+    // calculate the turn around time
+    for(i=0;i<n;i++)
+    {
+        tat[i] = wt[i] +bt[i];
     }
-
-    sort();
-    WT_TAT(&tot_tat, &tot_wt);
-
-    avg_tat = (float)tot_tat / n;
-    avg_wt = (float)tot_wt / n;
-
-    printf("\nPROCESS\tBURST TIME\tPRIORITY\tTURNAROUND TIME\tWAITING TIME\n");
-    for (int i = 0; i < n; i++) {
-        printf("Process[%d]\t%d\t%d\t%d\t%d\n", p[i] + 1, bt[i], pr[i], tat[i], wt[i]);
+    printf("\n Process\t burst Time\t\tPriority\t Waiting Time \t Turnaround Time\n");
+    for(i=0;i<n;i++)
+    {
+        printf("p%d\t\t\t\t%d\t\t\t\t%d\t\t\t%d\t\t\t\t%d\n",p[i],bt[i],priority[i],wt[i],tat[i]);
+        total_wt += wt[i];
+        total_tat += tat[i];
     }
-
-    printf("\nTotal Turnaround Time: %d", tot_tat);
-    printf("\nAverage Turnaround Time: %.2f", avg_tat);
-    printf("\nTotal Waiting Time: %d", tot_wt);
-    printf("\nAverage Waiting Time: %.2f", avg_wt);
-
-    return 0;
-}
+    printf("The total waiting time is %d\n",total_wt);
+    printf("The total turn around time is %d\n",total_tat);
+    printf("The average waiting time is%d \n",total_wt/n);
+    printf("The average turnaround time is %d\n",total_tat/n);
+        
+    }
+    

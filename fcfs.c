@@ -1,8 +1,8 @@
 #include<stdio.h>
 int main()
 {
-    int n ,i,j,temp;
-    int bt[20],wt[20],tat[20],p[20];
+    int n ,i;
+    int bt[20],wt[20],tat[20];
     int total_wt =0 ,total_tat=0;
     printf("enter the number of process :");
     scanf("%d",&n);
@@ -11,25 +11,6 @@ int main()
     {
         printf("p%d",i+1);
         scanf("%d",&bt[i]);
-        p[i] = i+1;
-    }
-    //sort the burst time 
-    for(i=0;i<n;i++)
-    {
-        for(j=i+1;j<n;j++)
-        {
-            if(bt[i] > bt[j])
-            {
-                // swap the burst time
-                temp = bt[i];
-                bt[i] = bt[j];
-                bt[j] = temp;
-                // swap the process id
-                temp = p[i];
-                p[i] = p[j];
-                p[j] = temp;
-            }
-        }
     }
     // calculate the waiting time
     wt[0]=0;
@@ -45,7 +26,7 @@ int main()
     printf("\n Process\t burst Time\t Waiting Time \t Turnaround Time\n");
     for(i=0;i<n;i++)
     {
-        printf("p%d\t\t\t\t%d\t\t\t\t%d\t\t\t\t%d\n",p[i],bt[i],wt[i],tat[i]);
+        printf("p%d\t\t\t\t%d\t\t\t\t%d\t\t\t\t%d\n",i+1,bt[i],wt[i],tat[i]);
         total_wt += wt[i];
         total_tat += tat[i];
     }
